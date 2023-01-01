@@ -49,7 +49,7 @@ async def on_ready():
     쟈졌마트["시가"]=100
     쟈졌마트["초기시가"]=100
     삼진제약["시가"]=1000
-    삼진제약["초기시가"]=1000
+    삼진제약["초기시가"]=1000 
     while True:        
         for i in 증권:
             plus=random.randint(0, 101)
@@ -57,6 +57,70 @@ async def on_ready():
             pm=random.randint(0,1)
             if pm==0:
                 eval(i)["증가량"]=plus
+                if eval(i)['초기시가']*3<=eval(i)["시가"]<=eval(i)["초기시가"]*4:
+                    pm=random.randint(1,10)
+                    if pm<=9:
+                        eval(i)["증가량"]=plus
+                    else:
+                        eval(i)["증가량"]=mius
+                elif eval(i)['초기시가']*4<=eval(i)["시가"]<=eval(i)["초기시가"]*5:
+                    pm=random.randint(1,10)
+                    if pm<=9:
+                        plus=random.randint(0, 91)
+                        eval(i)["증가량"]=plus
+                    else:
+                        mius=random.randint(-66,-1)
+                        eval(i)["증가량"]=mius
+                elif eval(i)['초기시가']*5<=eval(i)["시가"]<=eval(i)["초기시가"]*6:
+                    pm=random.randint(1,10)
+                    if pm<=8:
+                        plus=random.randint(0, 85)
+                        eval(i)["증가량"]=plus
+                    else:
+                        mius=random.randint(-67,-1)
+                        eval(i)["증가량"]=mius
+                elif eval(i)['초기시가']*6<=eval(i)["시가"]<=eval(i)["초기시가"]*7:
+                    pm=random.randint(1,10)
+                    if pm<=8:
+                        plus=random.randint(0, 80)
+                        eval(i)["증가량"]=plus
+                    else:
+                        mius=random.randint(-69,-1)
+                        eval(i)["증가량"]=mius                                               
+                elif eval(i)['초기시가']*7<=eval(i)["시가"]<=eval(i)["초기시가"]*8:
+                    pm=random.randint(1,10)
+                    if pm<=7:
+                        plus=random.randint(0, 75)
+                        eval(i)["증가량"]=plus
+                    else:
+                        mius=random.randint(-69,-1)
+                        eval(i)["증가량"]=mius       
+                elif eval(i)['초기시가']*8<=eval(i)["시가"]<=eval(i)["초기시가"]*9:
+                    pm=random.randint(1,10)
+                    if pm<=6:
+                        plus=random.randint(0, 70)
+                        eval(i)["증가량"]=plus
+                    else:
+                        mius=random.randint(-69,-1)
+                        eval(i)["증가량"]=mius   
+                elif eval(i)['초기시가']*9<=eval(i)["시가"]<=eval(i)["초기시가"]*10:
+                    pm=random.randint(1,10)
+                    if pm<=6:
+                        plus=random.randint(0, 65)
+                        eval(i)["증가량"]=plus
+                    else:
+                        mius=random.randint(-69,-1)
+                        eval(i)["증가량"]=mius   
+                elif eval(i)["초기시가"]*10<eval(i)["시가"]:
+                    pm=random.randint(1,10)
+                    if pm<=5:
+                        plus=random.randint(0, 60)
+                        eval(i)["증가량"]=plus
+
+                    else:
+                        mius=random.randint(-69,-1)
+                        eval(i)["증가량"]=mius     
+
             else:
                 eval(i)["증가량"]=mius
                 if (eval(i)["초기시가"]/100)*80<eval(i)["시가"]<=(eval(i)["초기시가"]/100)*90:
@@ -88,7 +152,7 @@ async def on_ready():
                     eval(i)["증가량"]=mius
                 elif eval(i)["시가"]<eval(i)["초기시가"]/100:
                     eval(i)["증가량"]=plus
-
+                
             eval(i)["시가"]=eval(i)["시가"]*(1+(eval(i)["증가량"]/100))
             
             for x in 투자자:
@@ -143,7 +207,7 @@ async def on_message(message):
         
 
     if message.content.startswith("/구매"):
-        
+        break1=1
         선택증권 = message.content[4:8]
         수량 = message.content[9:]
         확인리스트=[]
@@ -161,8 +225,15 @@ async def on_message(message):
                 embed = discord.Embed(title="옳바른 명령어를 입력해주십시오.", description="", color=0xFF0000)
                 embed.set_footer(text="/구매 (주식이름) (수량)")
                 await message.channel.send(embed=embed)
-            else:
-                수량=float(수량)
+            elif 수량 == "풀매수":
+                if 증권.count(선택증권)!=True:
+                    embed = discord.Embed(title=선택증권+"은/는 존재하지 않는 주식입니다.", description="", color=0xFF0000)               
+                    await message.channel.send(embed=embed)
+                    break1=0
+                else:     
+                    수량= 투자자[message.author.id][1] // eval(선택증권)["시가"]
+
+            if break1==1:
                 try:
                     수량= int(수량)
                     if 수량<=0:
@@ -187,12 +258,14 @@ async def on_message(message):
                                 embed.set_footer(text="현재 " + str(math.floor(투자자[message.author.id][1]))+ "원을 가지고 있습니다.")
                                 await message.channel.send(embed=embed)
                             else:
-                                embed = discord.Embed(title=선택증권+"을/를 "+ str(수량)+ "개 구매했습니다.", description="", color=0x00FF00)
+                                embed = discord.Embed(title=투자자[message.author.id][0]+"님이 " +선택증권+"을/를 "+ str(수량)+ "개 구매했습니다.", description="", color=0x00FF00)
                                 embed.add_field(name="자산", value=str(math.floor(투자자[message.author.id][1]))+"원", inline=True)
+                                embed.set_footer(text=선택증권+"를 개당 "+ eval(선택증권)["시가"]+"원에 구매하였습니다.")
                                 for i in range(2, len(투자자[message.author.id])):
                                     try:
                                         투자자[message.author.id][i][선택증권]                
                                         embed.add_field(name="구매 갯수", value=str(math.floor(투자자[message.author.id][i][선택증권][1]))+ "개", inline=True)
+                                        
                                     except KeyError:
                                         pass     
                     
@@ -212,6 +285,7 @@ async def on_message(message):
 
 
     if message.content.startswith("/판매"):
+        break1=1
         선택증권 = message.content[4:8]
         수량 = message.content[9:]
         확인리스트=[]
@@ -220,7 +294,8 @@ async def on_message(message):
         if 확인리스트.count(message.author.id)!=True:
             embed = discord.Embed(title="/주식등록 명령어를 이용해서 주식을 시작하세요.", description="등록되지 않은 투자가입니다.", color=0xFF0000)
             await message.channel.send(embed=embed)
-        else:            
+        else:
+          
             if 선택증권== "":
                 embed = discord.Embed(title="옳바른 명령어를 입력해주십시오.", description="", color=0xFF0000)
                 embed.set_footer(text="/판매 (주식이름) (수량)")
@@ -229,42 +304,72 @@ async def on_message(message):
                 embed = discord.Embed(title="옳바른 명령어를 입력해주십시오.", description="", color=0xFF0000)
                 embed.set_footer(text="/구매 (주식이름) (수량)")
                 await message.channel.send(embed=embed)
+            elif 수량 == "풀매도":
 
-            else:
-                try:
-                    int(수량)
+                if 증권.count(선택증권)!=True:
+                    embed = discord.Embed(title=선택증권+"은/는 존재하지 않는 주식입니다.", description="", color=0xFF0000)               
+                    await message.channel.send(embed=embed)
+                else:
+                    for i in range(2, len(투자자[message.author.id])):
+                        try:
+                            투자자[message.author.id][i][선택증권]                            
+                            if 투자자[message.author.id][i][선택증권][1]==0:
+                                embed = discord.Embed(title="가지고있는 "+ 선택증권+"의 개수가 없습니다.", description="", color=0xFF0000)
+                                await message.channel.send(embed=embed)
+                                break1=0
+                            else:
+
+                                수량=투자자[message.author.id][i][선택증권][1]
+                        except:
+
+                            pass
+            
+         #   else:
+            if break1==1:
+                try:                    
+                    수량=int(수량)
                     if 수량<=0:
+                        print(수량)
                         embed = discord.Embed(title="수량은 자연수만 가능합니다.", description="", color=0xFF0000)
                         await message.channel.send(embed=embed)
                     elif 증권.count(선택증권)!=True:                  
                         embed = discord.Embed(title=선택증권+"은/는 존재하지 않는 주식입니다.", description="", color=0xFF0000)               
                         await message.channel.send(embed=embed)
-                    try:
+                    else:
+                        
                         투자자[message.author.id][1]+= 수량*(eval(선택증권)['시가'])
                         for i in range(2, len(투자자[message.author.id])):
-                            투자자[message.author.id][i][선택증권]                
-                            투자자[message.author.id][i][선택증권][1]-=수량
-                            if 투자자[message.author.id][i][선택증권][1]<0:
-                                투자자[message.author.id][i][선택증권][1]+=수량
-                                투자자[message.author.id][1]-= 수량*(eval(선택증권)['시가'])
-                                embed = discord.Embed(title="갯수가 부족합니다!", description="", color=0xFF0000)
-                                embed.set_footer(text="현재 " + 선택증권 + "은/는 " + str(투자자[message.author.id][2][선택증권][1])+ "개를 가지고 있습니다.")
-                                await message.channel.send(embed=embed)
-                            else:
-                                embed = discord.Embed(title=선택증권+"을/를 "+ str(수량)+ "개 팔았습니다.", description="", color=0x00FF00)
-                                embed.add_field(name="자산", value=str(math.floor(투자자[message.author.id][1]))+"원", inline=True)
-                                embed.add_field(name=선택증권, value="수량 : " + str(math.floor(투자자[message.author.id][i][선택증권][1]))+ "개", inline=True)
-
-                                        
-                                await message.channel.send(embed=embed)                                
-                    except KeyError:
-                        pass
+                            try:
+                                투자자[message.author.id][i][선택증권]                
+                                투자자[message.author.id][i][선택증권][1]-=수량
+                                
+                                if 투자자[message.author.id][i][선택증권][1]<0:
+                                    투자자[message.author.id][i][선택증권][1]+=수량
+                                    투자자[message.author.id][1]-= 수량*(eval(선택증권)['시가'])
+                                    embed = discord.Embed(title="갯수가 부족합니다!", description="", color=0xFF0000)
+                                    embed.set_footer(text="현재 " + 선택증권 + "은/는 " + str(투자자[message.author.id][i][선택증권][1])+ "개를 가지고 있습니다.")
+                                    await message.channel.send(embed=embed)
+                                else:
+                                    embed = discord.Embed(title="현재 " + 투자자[message.author.id][0]+ "님이 "+ 선택증권+"을/를 "+ str(수량)+ "개 팔았습니다.", description="", color=0x00FF00)
+                                    embed.add_field(name="자산", value=str(math.floor(투자자[message.author.id][1]))+"원", inline=True)
+                                    embed.add_field(name=선택증권, value="수량 : " + str(math.floor(투자자[message.author.id][i][선택증권][1]))+ "개", inline=True)
+                                    embed.set_footer(text=선택증권+"를 개당 "+ eval(선택증권)["시가"]+"원에 구매하였습니다.")
+                                            
+                                    await message.channel.send(embed=embed)        
+                            except:
+                                pass                        
+                    
+                    
 
                 except:
                     embed = discord.Embed(title="수량은 자연수만 가능합니다.", description="", color=0xFF0000)
                     await message.channel.send(embed=embed)
 
-      
+
+                    
+
+
+
    
 
 
@@ -385,17 +490,17 @@ async def on_message(message):
             except UnboundLocalError:
                 embed.add_field(name="길드", value="없음", inline=False)
             try:
-                embed.add_field(name="무릉", value=maple_무릉, inline=False)
+                embed.add_field(name="무릉", value=maple_무릉, inline=True)
             except UnboundLocalError:
-                embed.add_field(name="무릉", value="없음", inline=False)
+                embed.add_field(name="무릉", value="없음", inline=True)
             try:
-                embed.add_field(name="무릉", value=maple_무릉시간, inline=False)
+                embed.add_field(name="무릉시간", value=maple_무릉시간, inline=True)
             except UnboundLocalError:
-                embed.add_field(name="무릉시간", value="없음", inline=False)
+                embed.add_field(name="무릉시간", value="없음", inline=True)
             try:
-                embed.add_field(name="유니온", value=maple_유니온, inline=False)
+                embed.add_field(name="유니온", value=maple_유니온, inline=True)
             except UnboundLocalError:
-                embed.add_field(name="유니온", value="없음", inline=False)
+                embed.add_field(name="유니온", value="없음", inline=True)
 
 
         except IndexError:
@@ -762,4 +867,4 @@ async def on_reaction_add(reaction, user):
         print(참명)
 
 
-client.run("OTkxNjc0MjA5MTgyOTQ1Mjgw.GIebfi.OrtRGRMBi17UwLjRlR8U0Zqq_bhVB_-HhaEeKQ")
+client.run("")
